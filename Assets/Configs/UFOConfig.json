@@ -1,0 +1,6 @@
+{
+  "MaxHealth": 1,
+  "CollisionDamage": 1,
+  "Speed": 1,
+  "BounceSpeed": 3
+}

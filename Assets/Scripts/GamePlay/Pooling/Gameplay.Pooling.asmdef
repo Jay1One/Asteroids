@@ -1,0 +1,16 @@
+{
+    "name": "Gameplay.Pooling",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6882eae12d323204681ba7051dd10147"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

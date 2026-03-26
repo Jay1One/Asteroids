@@ -1,0 +1,9 @@
+{
+  "MaxHealth": 3,
+  "RotationSpeed": 180,
+  "MaxMoveSpeed": 3,
+  "MoveAcceleration": 6,
+  "MoveDeceleration": 2,
+  "InvincibilityDuration": 3,
+  "BounceSpeed": 3
+}

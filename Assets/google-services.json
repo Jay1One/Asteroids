@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "821681689436",
+    "firebase_url": "https://asteroids-4717f-default-rtdb.firebaseio.com",
+    "project_id": "asteroids-4717f",
+    "storage_bucket": "asteroids-4717f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821681689436:android:d56d6987d42869ec0ce799",
+        "android_client_info": {
+          "package_name": "com.IntergalacticCorporationGames.Asteroids"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDV9G8CjwM7xhJGfWj5vAkrH4AK6PTuE8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
