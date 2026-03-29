@@ -1,5 +1,5 @@
 ﻿using GamePlay.Combat.Systems;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Player_mechanics;
 using UnityEngine;
 using Zenject;
 
@@ -8,26 +8,26 @@ namespace GamePlay.Input.Mobile_controls
     public class ThrustForwardButton : MonoBehaviour
     {
         private GameEndTracker _gameEndTracker;
-        private Player _player;
+        private PlayerMovement _playerMovement;
 
         [Inject]
-        public void Construct(GameEndTracker gameEndTracker, Player player)
+        public void Construct(GameEndTracker gameEndTracker, PlayerMovement playerMovement)
         {
             _gameEndTracker = gameEndTracker;
-            _player = player;
+            _playerMovement = playerMovement;
         }
         
         public void OnButtonHold()
         {
             if (!_gameEndTracker.IsGameOver)
             {
-                _player.TryThrustForward();
+                _playerMovement.TryThrustForward();
             }
         }
 
         public void OnButtonRelease()
         {
-            _player.StopGas();
+            _playerMovement.StopGas();
         }
     }
 }

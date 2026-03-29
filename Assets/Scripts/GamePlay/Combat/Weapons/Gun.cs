@@ -1,46 +1,45 @@
 ﻿using Core.Configs;
 using GamePlay.Combat.Bullets;
 using GamePlay.Combat.Systems;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Player_mechanics;
 using GamePlay.Pooling;
 using UnityEngine;
 using Zenject;
 
 namespace GamePlay.Combat.Weapons
 {
-    public class Gun : MonoBehaviour
-    {
-        [SerializeField] private Transform _shootPoint;
-        private ObjectPool<PlayerBullet> _bulletPool;
-        private Player _player;
-        private GameEndTracker _gameEndTracker;
+    public class Gun
+    { 
+        private readonly ObjectPool<PlayerBullet> _bulletPool;
+        private readonly PlayerState _playerState;
+        private readonly GameEndTracker _gameEndTracker;
+        private readonly Transform _shootPoint;
         private readonly Vector2 _startLookDirection=Vector2.up;
-        private float _bulletsPerSecond;
-        private float _attackDelay;
-        private float _bulletSpeed;
-        private int _bulletDamage;
+        private readonly float _attackDelay;
+        private readonly float _bulletSpeed;
+        private readonly int _bulletDamage;
         private float _lastShotTime;
 
         [Inject]
-        private void Construct(ObjectPool<PlayerBullet> bulletPool, GameEndTracker endTracker, GunConfig config, Player player)
+        public Gun(ObjectPool<PlayerBullet> bulletPool, GameEndTracker endTracker, GunConfig config,
+            PlayerState playerState, Transform shootPoint)
         {
-            _player = player;
+            _shootPoint = shootPoint;
+            _playerState = playerState;
             _gameEndTracker = endTracker;
             _bulletPool = bulletPool;
-            _bulletsPerSecond = config.BulletsPerSecond;
             _bulletSpeed = config.BulletSpeed;
             _bulletDamage = config.BulletDamage;
-            _attackDelay=1/_bulletsPerSecond;
+            _attackDelay=1/config.BulletsPerSecond;
         }
         
         public void TryShoot()
         {
-            if (_player.IsInvincible || !(_lastShotTime + _attackDelay < Time.time) || _gameEndTracker.IsGameOver) return;
+            if (_playerState.IsInvincible || !(_lastShotTime + _attackDelay < Time.time) || _gameEndTracker.IsGameOver) return;
             
-            PlayerBullet bullet = _bulletPool.GetObject();
-            bullet.transform.position = _shootPoint.position;
-            bullet.transform.rotation = transform.rotation;
-            bullet.Launch((transform.rotation*_startLookDirection), _bulletSpeed, _bulletDamage);
+            PlayerBullet bullet = _bulletPool.GetObject(_shootPoint.position);
+            bullet.transform.rotation = _shootPoint.rotation;
+            bullet.Launch((_shootPoint.rotation*_startLookDirection), _bulletSpeed, _bulletDamage);
             _lastShotTime = Time.time;
         }
     }

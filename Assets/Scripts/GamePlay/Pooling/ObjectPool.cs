@@ -24,7 +24,7 @@ namespace GamePlay.Pooling
             obj.gameObject.SetActive(false);
         }
     
-        public T GetObject()
+        public T GetObject(Vector2 position)
         {
             if (_pool.Count == 0)
             {
@@ -33,6 +33,7 @@ namespace GamePlay.Pooling
         
             var obj = _pool.Pop();
             obj.gameObject.SetActive(true);
+            obj.transform.position = position;
             obj.Activate();
             return obj;
         }

@@ -4,46 +4,65 @@ using Core.Configs;
 using Cysharp.Threading.Tasks;
 using GamePlay.Combat.Bullets;
 using GamePlay.Combat.Systems;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Player_mechanics;
 using UnityEngine;
 using Zenject;
 
 namespace GamePlay.Combat.Weapons
 {
-    public class Laser : MonoBehaviour
+    public class Laser : IInitializable, IDisposable
     {
-        [SerializeField] private LaserBeam _laserBeam;
-        private Player _player;
-        private CancellationToken _cancellationToken;
-        private GameEndTracker _gameEndTracker;
-        private float _shootTime;
-        private float _cooldown;
-        private int _maxCharges;
+        private readonly LaserBeam _laserBeam;
+        private readonly PlayerState _playerState;
+        private CancellationTokenSource _cts;
+        private readonly GameEndTracker _gameEndTracker;
+        private readonly float _shootTime;
+        private readonly float _cooldown;
+        private readonly int _maxCharges;
+        
         private int _currentCharges;
         private float _timeForNextCharge;
+        private bool _isShooting;
         
         public event Action<int> ChargesChanged;
         public event Action<float> CooldownPercentageChanged;
-        private bool _isShooting;
         
         [Inject]
-        public void Construct(LaserConfig config, GameEndTracker endTracker, Player player)
+        public Laser(LaserConfig config, GameEndTracker endTracker, PlayerState playerState, LaserBeam laserBeam)
         {
-            _player = player;
+            _laserBeam = laserBeam;
+            _playerState = playerState;
             _gameEndTracker = endTracker;
             _cooldown = config.ChargeTime;
             _maxCharges = config.MaxCharges;
             _currentCharges = _maxCharges;
             _shootTime = config.ShootTime;
         }
-
-        private void Start()
+        
+        public void Initialize()
         {
-            _cancellationToken = this.GetCancellationTokenOnDestroy();
+            _laserBeam.gameObject.SetActive(false);
+            _cts = new CancellationTokenSource();
             ChargesChanged?.Invoke(_currentCharges);
-            _ = TrackCharges(_cancellationToken);
+            _ = TrackCharges(_cts.Token);
         }
 
+        public void Dispose()
+        {
+            _cts?.Cancel();
+            _cts?.Dispose();
+        }
+
+        public void TryShoot()
+        {
+            if (_playerState.IsInvincible || _currentCharges <= 0 || _isShooting || _gameEndTracker.IsGameOver)
+            {
+                return;
+            }
+            
+            _ = Fire(_cts.Token);
+        }
+        
         private async UniTask TrackCharges(CancellationToken token)
         {
             while (!_gameEndTracker.IsGameOver)
@@ -54,6 +73,7 @@ namespace GamePlay.Combat.Weapons
                 
                     if (_timeForNextCharge <= 0)
                     {
+                        _timeForNextCharge = _cooldown;
                         _currentCharges++;
                         ChargesChanged?.Invoke(_currentCharges);
                     }
@@ -64,17 +84,7 @@ namespace GamePlay.Combat.Weapons
                 await UniTask.Yield(token);
             }
         }
-
-        public void TryShoot()
-        {
-            if (_player.IsInvincible || _currentCharges <= 0 || _isShooting || _gameEndTracker.IsGameOver)
-            {
-                return;
-            }
-            
-            _ = Fire(_cancellationToken);
-        }
-
+        
         private async UniTask Fire(CancellationToken token)
         {
             _isShooting = true;

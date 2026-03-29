@@ -1,5 +1,5 @@
 ﻿using System;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Player_mechanics;
 using MVVM;
 using UniRx;
 using Zenject;
@@ -8,7 +8,7 @@ namespace UI.ViewModels
 {
     public class HealthViewModel : IInitializable, IDisposable
     {
-        private Player _player;
+        private readonly PlayerHealthService _playerHealthService;
         
         [Data("MaxHealth")]
         public ReactiveProperty<int> MaxHealth = new ReactiveProperty<int>();
@@ -16,9 +16,9 @@ namespace UI.ViewModels
         [Data("CurrentHealth")]
         public ReactiveProperty<int> CurrentHealth = new ReactiveProperty<int>();
 
-        public HealthViewModel(Player player)
+        public HealthViewModel(PlayerHealthService playerHealthService)
         {
-            _player = player;
+            _playerHealthService = playerHealthService;
         }
 
         private void OnHealthChanged(int currentHealth, int maxHealth)
@@ -29,12 +29,12 @@ namespace UI.ViewModels
 
         public void Initialize()
         {
-            _player.HealthChanged += OnHealthChanged;
+            _playerHealthService.HealthChanged += OnHealthChanged;
         }
 
         public void Dispose()
         {
-            _player.HealthChanged += OnHealthChanged;
+            _playerHealthService.HealthChanged += OnHealthChanged;
         }
     }
 }

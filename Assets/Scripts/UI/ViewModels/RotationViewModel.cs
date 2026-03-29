@@ -1,5 +1,5 @@
 ﻿using System;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Player_mechanics;
 using MVVM;
 using UniRx;
 using Zenject;
@@ -8,14 +8,14 @@ namespace UI.ViewModels
 {
     public class RotationViewModel : IInitializable, IDisposable
     {
-        private readonly Player _player;
+        private readonly PlayerState _playerState;
         
         [Data("Rotation")]
         public ReactiveProperty<string> Rotation = new ReactiveProperty<string>();
 
-        public RotationViewModel(Player player)
+        public RotationViewModel(PlayerState playerState)
         {
-            _player = player;
+            _playerState = playerState;
         }
 
         private void OnRotationChanged(float rotation)
@@ -25,12 +25,12 @@ namespace UI.ViewModels
 
         public void Initialize()
         {
-            _player.RotationChanged += OnRotationChanged;
+            _playerState.RotationChanged += OnRotationChanged;
         }
 
         public void Dispose()
         {
-            _player.RotationChanged -= OnRotationChanged;
+            _playerState.RotationChanged -= OnRotationChanged;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Player_mechanics;
 using MVVM;
 using UniRx;
 using Zenject;
@@ -8,24 +8,24 @@ namespace UI.ViewModels
 {
     public class SpeedViewModel :IInitializable, IDisposable
     {
-        private readonly Player _player;
+        private readonly PlayerMovement _playerMovement;
         
         [Data ("Speed")]
         public ReactiveProperty<string> Speed = new ReactiveProperty<string>();
         
-        public SpeedViewModel(Player player)
+        public SpeedViewModel(PlayerMovement playerMovement)
         {
-            _player = player;
+            _playerMovement = playerMovement;
         }
 
         public void Dispose()
         {
-            _player.SpeedChanged -= OnSpeedChanged;
+            _playerMovement.SpeedChanged -= OnSpeedChanged;
         }
 
         public void Initialize()
         {
-            _player.SpeedChanged += OnSpeedChanged;
+            _playerMovement.SpeedChanged += OnSpeedChanged;
         }
 
         private void OnSpeedChanged(float speed)

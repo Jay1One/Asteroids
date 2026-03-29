@@ -1,6 +1,10 @@
 using System;
 using MVVM;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
+
 using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;

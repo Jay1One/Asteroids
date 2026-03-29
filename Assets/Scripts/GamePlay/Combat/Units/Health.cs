@@ -1,4 +1,6 @@
-﻿namespace GamePlay.Combat.Units
+﻿using System;
+
+namespace GamePlay.Combat.Units
 {
     public class Health
     {
@@ -7,6 +9,8 @@
         
         public int CurrentHealth => _currentHealth;
         public int MaxHealth => _maxHealth;
+        
+        public event Action Died;
 
         public Health(int maxHealth)
         {
@@ -18,9 +22,10 @@
         {
             _currentHealth -= damage;
             
-            if (_currentHealth<0)
+            if (_currentHealth<=0)
             {
                 _currentHealth = 0;
+                Died?.Invoke();
             }
         }
 

@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Enemies;
 using GamePlay.Pooling;
 using UnityEngine;
 using Zenject;
@@ -17,7 +17,6 @@ namespace GamePlay.Combat.Systems
         private readonly GameEndTracker _gameEndTracker;
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         
-        private readonly float _randomAsteroidRotationRange = 30f;
         private readonly float _timeForMaxDifficulty = 400f;
         
         private readonly float _maxAsteroidSpawnInterval=5f;
@@ -90,10 +89,11 @@ namespace GamePlay.Combat.Systems
                 return;
             }
 
-            if (Time.time -_startTime > _timeForMaxDifficulty)
+            if (Time.time - _startTime > _timeForMaxDifficulty)
             {
                 _asteroidSpawnInterval = _minAsteroidSpawnInterval;
                 _ufoSpawnInterval = _minUfoSpawnInterval;
+                _maxDifficultyReached = true;
             }
             else
             {
@@ -102,29 +102,19 @@ namespace GamePlay.Combat.Systems
                 
                 _ufoSpawnInterval = Mathf.Lerp(_maxUfoSpawnInterval, _minUfoSpawnInterval,
                     (Time.time - _startTime) / _timeForMaxDifficulty);
-                
-                _maxDifficultyReached = true;
             }
         }
 
         private void SpawnAsteroid()
         {
             Vector2 position = GetRandomPointOnGameFieldEdge();
-            Vector2 direction = -position.normalized;
-            float randomRotation = Random.Range(-_randomAsteroidRotationRange, _randomAsteroidRotationRange);
-            var rotation = Quaternion.Euler(0f, 0f, randomRotation);
-            direction=rotation*direction;
-            
-            var asteroid = _asteroidPool.GetObject();
-            asteroid.transform.position = position;
-            asteroid.SetDirection(direction);
+            _asteroidPool.GetObject(position);
         }
 
         private void SpawnUfo()
         {
             Vector2 position = GetRandomPointOnGameFieldEdge();
-            var ufo = _ufoPool.GetObject();
-            ufo.transform.position = position;
+            _ufoPool.GetObject(position);
         }
         
         private Vector2 GetRandomPointOnGameFieldEdge()

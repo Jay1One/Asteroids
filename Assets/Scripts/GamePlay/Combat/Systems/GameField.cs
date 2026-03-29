@@ -1,46 +1,21 @@
 ﻿using Core.Configs;
-using GamePlay.Combat.Bullets;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Player_mechanics;
 using UnityEngine;
-using Zenject;
 
 namespace GamePlay.Combat.Systems
 {
-    public class GameField : MonoBehaviour, IInitializable
+    public class GameField
     {
         public float Width { get; private set; }
         public float Height { get; private set; }
-
-        [Inject]
-        public void Construct(GameFieldConfig config)
+        
+        public GameField(GameFieldConfig config)
         {
             Width = config.Width;
             Height = config.Height;
         }
-        public void Initialize()
-        {
-            transform.localScale = new Vector3(Width,Height,1);
-        }
 
-        private void OnTriggerExit2D(Collider2D other)
-        {
-            if (other.gameObject.TryGetComponent<Player>(out var player))
-            {
-                TeleportPlayer(player);
-            }
-
-            if (other.gameObject.TryGetComponent<Enemy>(out var enemy))
-            {
-                enemy.Deactivate();
-            }
-            
-            if (other.gameObject.TryGetComponent<PlayerBullet>(out var bullet))
-            {
-                bullet.Deactivate();
-            }
-        }
-
-        private void TeleportPlayer(Player player)
+        public void TeleportPlayer(Player player)
         {
             float newX = player.transform.position.x;
             float newY = player.transform.position.y;

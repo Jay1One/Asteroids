@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Core.Signals;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Enemies;
 using Zenject;
 
 namespace GamePlay.Combat.Systems
@@ -28,8 +28,15 @@ namespace GamePlay.Combat.Systems
         
         private void OnEnemyDied(EnemyDiedSignal signal)
         {
-            _score += _rewards[signal.Enemy.GetType()];
-            ScoreChanged?.Invoke(_score);
+            if (_rewards.TryGetValue(signal.Enemy.GetType(), out var value))
+            {
+                _score += _rewards[signal.Enemy.GetType()];
+                ScoreChanged?.Invoke(_score);
+            }
+            else
+            {
+                throw new KeyNotFoundException("No such enemy type in rewards");
+            }
         }
 
         public void Initialize()

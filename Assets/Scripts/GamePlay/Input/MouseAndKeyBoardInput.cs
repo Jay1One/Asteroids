@@ -1,5 +1,5 @@
 using GamePlay.Combat.Systems;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Player_mechanics;
 using GamePlay.Combat.Weapons;
 using UnityEngine;
 using Zenject;
@@ -11,15 +11,17 @@ namespace GamePlay.Input
         private readonly KeyCode _upKey = KeyCode.W;
         private readonly KeyCode _leftKey = KeyCode.A;
         private readonly KeyCode _rightKey = KeyCode.D;
-    
-        private readonly Player _player;
+        
+        private readonly PlayerMovement _playerMovement;
+        private readonly PlayerState _playerState;
         private readonly Laser _laser;
         private readonly Gun _gun;
         private readonly GameEndTracker _gameEndTracker;
         
-        public MouseAndKeyBoardInput(Player player, Laser laser, Gun gun, GameEndTracker gameEndTracker)
+        public MouseAndKeyBoardInput(PlayerState playerState, PlayerMovement playerMovement, Laser laser, Gun gun, GameEndTracker gameEndTracker)
         {
-            _player = player;
+            _playerState = playerState;
+            _playerMovement = playerMovement;
             _laser = laser;
             _gun = gun;
             _gameEndTracker = gameEndTracker;
@@ -34,21 +36,21 @@ namespace GamePlay.Input
             
             if (UnityEngine.Input.GetKey(_upKey))
             {
-                _player.TryThrustForward();
+                _playerMovement.TryThrustForward();
             }
             if (UnityEngine.Input.GetKeyUp(_upKey))
             {
-                _player.StopGas();
+                _playerMovement.StopGas();
             }
             
             if (UnityEngine.Input.GetKey(_leftKey))
             {
-                _player.TryRotate(1);
+                _playerState.TryRotate(1);
             }
             
             if (UnityEngine.Input.GetKey(_rightKey))
             {
-                _player.TryRotate(-1);
+                _playerState.TryRotate(-1);
             }
 
             if (UnityEngine.Input.GetMouseButtonDown(0))

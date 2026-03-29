@@ -32,13 +32,13 @@ namespace Ads
 
         private void OnSceneloaded()
         {
-            if (_interstitialsShown==0)
+            if (_interstitialsShown == 0)
             {
                 TryShowInterstitial();
             }
             else
             {
-                if (_lastInterstitialTime+_interstitialCooldown>Time.time)
+                if (_lastInterstitialTime + _interstitialCooldown > Time.time)
                 {
                     TryShowInterstitial();
                 }
@@ -50,6 +50,7 @@ namespace Ads
             if (!_adsProvider.IsInterstitialLoaded()) return;
             
             _adsProvider.ShowInterstitialAd();
+            _interstitialsShown++;
             _lastInterstitialTime = Time.time;
         }
     }

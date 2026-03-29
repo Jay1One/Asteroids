@@ -1,4 +1,4 @@
-﻿using GamePlay.Combat.Units;
+﻿using GamePlay.Combat.Units.Player_mechanics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
@@ -16,12 +16,12 @@ namespace GamePlay.Input.Mobile_controls
         private Vector2 _inputVector;
         private bool _isDragging;
 
-        private Player _player;
+        private PlayerState _playerState;
         
         [Inject]
-        private void Construct(Player player)
+        private void Construct(PlayerState playerState)
         {
-            _player = player;
+            _playerState = playerState;
         }
 
         private void Start()
@@ -42,7 +42,7 @@ namespace GamePlay.Input.Mobile_controls
         {
             if (_isDragging)
             {
-                _player.TryRotate(_inputVector);
+                _playerState.TryRotate(_inputVector);
             }
         }
 

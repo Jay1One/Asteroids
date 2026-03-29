@@ -19,6 +19,9 @@ namespace GamePlay
     
         private void Start()
         {
+#if !(UNITY_IOS || UNITY_ANDROID) || UNITY_EDITOR
+            _bottomViewPortBorder=0f;
+#endif
             float minCameraWidth = _gameField.Width;
             float minCameraHeight = _gameField.Height / (_topViewPortBorder - _bottomViewPortBorder);
             float cameraCenterYOffsetViewPort = (1-_topViewPortBorder - _bottomViewPortBorder) / 2f;

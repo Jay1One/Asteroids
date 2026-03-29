@@ -1,8 +1,10 @@
 ﻿using GamePlay.Combat.Bullets;
 using GamePlay.Combat.Systems;
-using GamePlay.Combat.Units;
+using GamePlay.Combat.Units.Enemies;
+using GamePlay.Combat.Units.Player_mechanics;
 using GamePlay.Combat.Weapons;
 using GamePlay.Factories;
+using GamePlay.Physics;
 using GamePlay.Pooling;
 using UnityEngine;
 using Zenject;
@@ -11,13 +13,13 @@ namespace Infrastructure.Installers
 {
     public class BattleInstaller : MonoInstaller
     { 
-        [SerializeField] private Player _player;
-        [SerializeField] private Gun _gun;
-        [SerializeField] private Laser _laser;
+        [SerializeField] private Player player;
+        [SerializeField] private Transform _gunShootPoint;
+        [SerializeField] private LaserBeam _laserBeam;
         [SerializeField] private Asteroid _asteroidPrefab;
         [SerializeField] private Ufo _ufoPrefab;
         [SerializeField] private AsteroidShard _asteroidShardPrefab;
-        [SerializeField] private GameField _gameField;
+        [SerializeField] private GameFieldMonoBehaviour _gameFieldMonoBehaviour;
         [SerializeField] private PlayerBullet _playerBulletPrefab;
         
         [SerializeField] private int _asteroidPoolSize;
@@ -31,7 +33,7 @@ namespace Infrastructure.Installers
             BindPlayer();
             BindSystems();
         }
-        
+
         private void BindPools()
         {
             Container.Bind<ObjectFactory<Asteroid>>().AsSingle().WithArguments(_asteroidPrefab, Container);
@@ -47,17 +49,25 @@ namespace Infrastructure.Installers
         
         private void BindPlayer()
         {
-            Container.Bind<Player>().FromInstance(_player).AsSingle();
-            Container.Bind<Gun>().FromInstance(_gun).AsSingle();
-            Container.Bind<Laser>().FromInstance(_laser).AsSingle();
+            Container.Bind<Player>().FromInstance(player).AsSingle();
+            Container.Bind<LaserBeam>().FromInstance(_laserBeam).AsSingle();
+            Container.Bind<Gun>().AsSingle().WithArguments(_gunShootPoint).NonLazy();
+            Container.BindInterfacesAndSelfTo<Laser>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerMovement>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerState>().AsSingle();
+            Container.Bind<PhysicsBody>().FromComponentOn(player.gameObject).AsSingle().WhenInjectedInto<PlayerMovement>();
+            Container.Bind<Transform>().FromComponentOn(player.gameObject).WhenInjectedInto<PlayerState>();
+            Container.Bind<Transform>().FromComponentOn(player.gameObject).WhenInjectedInto<PlayerMovement>();
+            Container.Bind<PlayerHealthService>().AsSingle();
         }
         
         private void BindSystems()
         {
             Container.BindInterfacesAndSelfTo<Spawner>().AsSingle();
-            Container.BindInterfacesAndSelfTo<GameField>().FromInstance(_gameField).AsSingle();
+            Container.BindInterfacesAndSelfTo<GameField>().AsSingle();
             Container.BindInterfacesAndSelfTo<ScoreCalculator>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<GameEndTracker>().AsSingle();
+            Container.Bind<ShardSpawner>().AsSingle();
         }
     }
 }

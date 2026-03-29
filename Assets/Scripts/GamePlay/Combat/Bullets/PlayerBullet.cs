@@ -1,4 +1,4 @@
-﻿using GamePlay.Combat.Units;
+﻿using GamePlay.Combat.Units.Enemies;
 using GamePlay.Pooling;
 using UnityEngine;
 using Zenject;
@@ -44,7 +44,7 @@ namespace GamePlay.Combat.Bullets
             if (other.gameObject.TryGetComponent<Enemy>(out var enemy))
             {
                 enemy.TakeDamage(_damage);
-                _pool.Return(this);
+                Deactivate();
             }
         }
     }
