@@ -7,7 +7,13 @@
         "GUID:6055be8ebefd69e48b49212b09b47b2f",
         "GUID:560b04d1a97f54a4e82edc0cbbb69285"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor",
+        "WebGL",
+        "WindowsStandalone32",
+        "WindowsStandalone64",
+        "XboxOne"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

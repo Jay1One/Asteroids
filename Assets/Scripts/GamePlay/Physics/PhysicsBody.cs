@@ -5,34 +5,38 @@ namespace GamePlay.Physics
 {
     public class PhysicsBody : MonoBehaviour
     { 
-        private float _maxSpeed; 
-        private float _deceleration;
-        private Vector2 _velocity;
-        private float _speed;
-        
+        private PhysicsBodyLogic _physicsBodyLogic;
         public event Action<float> SpeedChanged;
+        
         public void Initialize(float maxSpeed, float deceleration)
         {
-            _maxSpeed = maxSpeed;
-            _deceleration = deceleration;
+            _physicsBodyLogic = new PhysicsBodyLogic(maxSpeed, deceleration);
+            _physicsBodyLogic.SpeedChanged += OnSpeedChanged;
         }
 
         public void AddForce(Vector2 force)
         {
-            _velocity += force;
-            _velocity = Vector2.ClampMagnitude(_velocity, _maxSpeed);
+            _physicsBodyLogic.AddForce(force);
         }
 
         public void SetVelocity(Vector2 velocity)
         {
-            _velocity = Vector2.ClampMagnitude(velocity, _maxSpeed);
+            _physicsBodyLogic.SetVelocity(velocity);
         }
         
         private void Update()
         {
-            transform.position = (Vector2)transform.position + _velocity * Time.deltaTime;
-            SpeedChanged?.Invoke(_velocity.magnitude);
-            _velocity -= _velocity *(_deceleration * Time.deltaTime);
+            _physicsBodyLogic?.UpdatePosition(transform);
+        }
+
+        private void OnDestroy()
+        {
+            _physicsBodyLogic.SpeedChanged -= OnSpeedChanged;
+        }
+
+        private void OnSpeedChanged(float speed)
+        {
+            SpeedChanged?.Invoke(speed);
         }
     }
 }
